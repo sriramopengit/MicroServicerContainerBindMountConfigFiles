@@ -17,6 +17,8 @@ namespace MicroServicerContainerBindMountConfigFiles.Controllers
         [HttpGet]
         public IActionResult Get()
         {
+            // The configuration file is fetched dynamically based on the environment variable DOCKER_ENV in Program.cs
+            // This allows for different configurations to be loaded based on the environment
             var message = _configuration["AppSettings:Message"] ?? "No message found";
             return Ok(new { Message = message });
         }

@@ -7,11 +7,24 @@ namespace MicroServicerContainerBindMountConfigFiles
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            //builder.Configuration
+            //       .SetBasePath(Directory.GetCurrentDirectory())
+            //       .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            //       .AddJsonFile("appsettings.Docker.json", optional: true, reloadOnChange: true)
+            //       .AddEnvironmentVariables();
+
+
+            // Read DOCKER_ENV variable which is injected into the container
+            // through the docker-compose.yml file (default to "Dev" if not set)
+            var dockerEnv = Environment.GetEnvironmentVariable("DOCKER_ENV") ?? "Dev";
+
+            // Configure Configuration Sources
             builder.Configuration
-                   .SetBasePath(Directory.GetCurrentDirectory())
-                   .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                   .AddJsonFile("appsettings.Docker.json", optional: true, reloadOnChange: true)
-                   .AddEnvironmentVariables();
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.Docker.{dockerEnv}.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
+
 
             // Add services to the container.
 

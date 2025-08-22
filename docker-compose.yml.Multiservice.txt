@@ -1,0 +1,40 @@
+# Example for Mounting Configuration files for 3 different serivces bindmount-dev, bindmount-staging, bindmount-prod.
+# This is just an example for showing how mount works.
+# Actually, we can use one service in docker-compose file, use environment variables to pass config files.
+
+
+version: "3.9"
+
+services:
+  bindmount-dev:
+    build: ./MicroServicerContainerBindMountConfigFiles
+    container_name: MicroserviceDockerMount-dev
+    environment:
+      - DOCKER_ENV=Dev
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - ./MicroServicerContainerBindMountConfigFiles/appsettings.Docker.Dev.json:/app/appsettings.Docker.Dev.json:ro
+    ports:
+      - "5001:80"
+
+  bindmount-staging:
+    build: ./MicroServicerContainerBindMountConfigFiles
+    container_name: MicroserviceDockerMount-staging
+    environment:
+      - DOCKER_ENV=Staging
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - ./MicroServicerContainerBindMountConfigFiles/appsettings.Docker.Staging.json:/app/appsettings.Docker.Staging.json:ro
+    ports:
+      - "5002:80"
+
+  bindmount-prod:
+    build: ./MicroServicerContainerBindMountConfigFiles
+    container_name: MicroserviceDockerMount-prod
+    environment:
+      - DOCKER_ENV=Prod
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - ./MicroServicerContainerBindMountConfigFiles/appsettings.Docker.Prod.json:/app/appsettings.Docker.Prod.json:ro 
+    ports:
+      - "5003:80"

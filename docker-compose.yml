@@ -1,32 +1,27 @@
-# Define all the services (containers) for this project
+# ---------------------------------------------------------------
+# Use this to create a single service 
+# and dynamically mount the config files upon container creation
+# 
+# Create a multiple .env files (.env.dev, .env.prod, .env.staging)
+# In these .env files, set the the settings files to use
+# in the variable APPSETTINGS_FILE
+# 
+# When running docker compose, specify the .env file to be used.
+# For example: docker compose --env-file .env.prod up -d
+# ----------------------------------------------------------------
+
+
 services:
-  # Our custom service name
-  bindmount-demo:
-    # Build the Docker image from the given path (relative to this file)
+  multi-configfiles-using-singleservice:
     build: ./MicroServicerContainerBindMountConfigFiles
-    
-    # Map host port 8091 to container port 80
-    # (Host:Container)
-    ports:
-      - "8091:80"
-
-    # Mount a local config file into the container
-    # Left side: host machine path
-    # Right side: path inside container
-    # :ro = read-only (container cannot modify the file)
+    container_name: multiconfigfiles-singleservice
     volumes:
-      - ./MicroServicerContainerBindMountConfigFiles/appsettings.Docker.json:/app/appsettings.Docker.json:ro
-
-    # Define environment variables for the container
+      # Host file (outside) → Container file (inside)
+      - ${APPSETTINGS_FILE}:/app/appsettings.json
     environment:
-      # Make ASP.NET Core listen on port 80 inside the container
       - ASPNETCORE_URLS=http://+:80
-
-      # (Optional) Helps ASP.NET know it's running inside a container
-      - DOTNET_RUNNING_IN_CONTAINER=true
-
-      # (Optional) Improves file watching in containerized environments
-      - DOTNET_USE_POLLING_FILE_WATCHER=1
-
-      # (Optional) Specify where the dotnet host is located inside container
-      - DOTNET_HOST_PATH=/usr/share/dotnet/dotnet
+      # Force environment to Production, as we are always mounting 
+      # dynamically .json file (Prod, Staging, Env) to app/appsettings.json, 
+      - ASPNETCORE_ENVIRONMENT=Production   
+    ports:
+      - "5004:80"

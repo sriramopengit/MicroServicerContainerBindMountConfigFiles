@@ -1,0 +1,32 @@
+# Define all the services (containers) for this project
+services:
+  # Our custom service name
+  bindmount-demo:
+    # Build the Docker image from the given path (relative to this file)
+    build: ./MicroServicerContainerBindMountConfigFiles
+    
+    # Map host port 8091 to container port 80
+    # (Host:Container)
+    ports:
+      - "8091:80"
+
+    # Mount a local config file into the container
+    # Left side: host machine path
+    # Right side: path inside container
+    # :ro = read-only (container cannot modify the file)
+    volumes:
+      - ./MicroServicerContainerBindMountConfigFiles/appsettings.Docker.json:/app/appsettings.Docker.json:ro
+
+    # Define environment variables for the container
+    environment:
+      # Make ASP.NET Core listen on port 80 inside the container
+      - ASPNETCORE_URLS=http://+:80
+
+      # (Optional) Helps ASP.NET know it's running inside a container
+      - DOTNET_RUNNING_IN_CONTAINER=true
+
+      # (Optional) Improves file watching in containerized environments
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+
+      # (Optional) Specify where the dotnet host is located inside container
+      - DOTNET_HOST_PATH=/usr/share/dotnet/dotnet
